@@ -15,6 +15,10 @@ The backend health endpoint is available at `http://localhost:5000/health`.
 
 Set the secret environment variables shown in `.env.example`, then run `docker compose up --build -d`. The frontend is exposed on port 3000 and the API on port 5000.
 
+## Streamlit Cloud companion
+
+The repository includes `streamlit_app.py` for a public RentWise AI companion page. Streamlit Cloud installs `requirements.txt` automatically. In the Streamlit app settings, add `RENTWISE_API_URL` as a secret (for example, `https://api.example.com/health`) to enable its backend status indicator. The authenticated application itself is served by the Next.js frontend and Express API.
+
 ## Roles and entry points
 
 - Master Admin: `/master/login` — seeded only, never publicly registered.
