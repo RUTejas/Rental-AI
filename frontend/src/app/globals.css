@@ -1,0 +1,181 @@
+@import "tailwindcss";
+
+.auth-input { width: 100%; border-radius: 0.75rem; border: 1px solid #2A3441; background: #121A22; padding: 0.85rem 1rem; color: #FAFAF8; outline: none; }
+.auth-input:focus { border-color: #C89B5E; box-shadow: 0 0 0 2px rgba(200,155,94,.18); }
+
+@theme {
+  /* Warm Luxury Home Tech Custom Colors */
+  --color-navy-deep: #0B1117;
+  --color-graphite-warm: #121A22;
+  --color-stone-soft: #F7F3EC;
+  --color-ivory-warm: #FFF8EF;
+
+  --color-bronze-luxury: #C89B5E;
+  --color-terracotta-muted: #B66A4B;
+  --color-sage: #7E9B87;
+  --color-forest-deep: #1F3D35;
+
+  --color-beige-warm: #E8DCC8;
+  --color-sandstone: #D6C4A8;
+  --color-slate-grey: #6B7280;
+  --color-ash-grey: #9CA3AF;
+  --color-white-soft: #FAFAF8;
+  --color-black-near: #070A0D;
+
+  --color-success-premium: #2F7D5C;
+  --color-pending-premium: #C89B5E;
+  --color-warning-premium: #D97706;
+  --color-rejected-premium: #B94A48;
+  --color-info-premium: #3F6C8F;
+  --color-inactive-premium: #6B7280;
+
+  /* Custom Borders & Radius */
+  --radius-card-premium: 22px;
+  --radius-btn-premium: 16px;
+}
+
+/* Base resets & typography */
+:root {
+  --font-sans: 'Inter', sans-serif;
+  --font-serif: 'Playfair Display', serif;
+  scroll-behavior: auto; /* Let Lenis manage smooth scrolling */
+}
+
+body {
+  font-family: var(--font-sans);
+  margin: 0;
+  padding: 0;
+  background-color: #0B1117; /* Default dark mode dashboard theme */
+  color: #FAFAF8;
+  overflow-x: hidden;
+}
+
+/* Light theme classes override */
+.light-theme {
+  background-color: #FFF8EF;
+  color: #070A0D;
+}
+
+/* Gradients */
+.bg-hero-gradient {
+  background: linear-gradient(135deg, #0B1117 0%, #121A22 45%, #1F3D35 100%);
+}
+
+.bg-bronze-cta-gradient {
+  background: linear-gradient(135deg, #C89B5E 0%, #B66A4B 100%);
+}
+
+.bg-warm-light-gradient {
+  background: linear-gradient(135deg, #FFF8EF 0%, #F7F3EC 50%, #E8DCC8 100%);
+}
+
+.bg-secure-document-gradient {
+  background: linear-gradient(135deg, #1F3D35 0%, #0B1117 100%);
+}
+
+/* Scroll snap container for cinematic transitions */
+.scroll-snap-container {
+  scroll-snap-type: y mandatory;
+  overflow-y: scroll;
+  height: 100vh;
+}
+
+.scroll-snap-section {
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+  height: 100vh;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0B1117;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #C89B5E;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #B66A4B;
+}
+
+/* Modern Card Layouts */
+.dark-card {
+  background: rgba(18, 26, 34, 0.85);
+  border: 1px solid rgba(200, 155, 94, 0.18);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(12px);
+  border-radius: 22px;
+}
+
+.light-card {
+  background: #FAFAF8;
+  border: 1px solid #E8DCC8;
+  box-shadow: 0 18px 50px rgba(36, 24, 12, 0.08);
+  border-radius: 22px;
+}
+
+/* Buttons with premium design and animations */
+.btn-primary {
+  background: #C89B5E;
+  color: #0B1117;
+  font-weight: 600;
+  border-radius: 16px;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 15px rgba(200, 155, 94, 0.3);
+}
+
+.btn-primary:hover {
+  background: #B66A4B;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(182, 106, 75, 0.4);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+.btn-secondary {
+  background: transparent;
+  border: 1px solid #C89B5E;
+  color: #C89B5E;
+  font-weight: 600;
+  border-radius: 16px;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-secondary:hover {
+  background: rgba(200, 155, 94, 0.08);
+  transform: translateY(-2px);
+}
+
+.btn-secondary:active {
+  transform: translateY(0);
+}
+
+/* Text reveals */
+.text-reveal {
+  background: linear-gradient(to right, #FAFAF8 0%, #FAFAF8 100%);
+  background-size: 0% 100%;
+  background-repeat: no-repeat;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: reveal 1.5s cubic-bezier(0.77, 0, 0.175, 1) forwards;
+}
+
+@keyframes reveal {
+  0% {
+    background-size: 0% 100%;
+  }
+  100% {
+    background-size: 100% 100%;
+  }
+}

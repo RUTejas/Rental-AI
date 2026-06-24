@@ -1,0 +1,238 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── Master Admin ───────────────────────────────────────────────────────────
+model MasterAdmin {
+  id            String    @id @default(uuid())
+  email         String    @unique
+  passwordHash  String
+  name          String
+  loginAttempts Int       @default(0)
+  lockedUntil   DateTime?
+  lastLogin     DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+// ─── Admin ───────────────────────────────────────────────────────────────────
+model Admin {
+  id                        String      @id @default(uuid())
+  email                     String      @unique
+  passwordHash              String
+  name                      String
+  phone                     String?
+  status                    AdminStatus @default(PENDING)
+  emailVerified             Boolean     @default(false)
+  emailVerificationToken    String?
+  emailVerificationExpiry   DateTime?
+  passwordResetToken        String?
+  passwordResetExpiry       DateTime?
+  loginAttempts             Int         @default(0)
+  lockedUntil               DateTime?
+  lastLogin                 DateTime?
+  createdAt                 DateTime    @default(now())
+  updatedAt                 DateTime    @updatedAt
+  deletedAt                 DateTime?
+
+  users         User[]
+  properties    Property[]
+  rentalRecords RentalRecord[]
+  agreements    Agreement[]
+  documents     UploadedDocument[] @relation("AdminDocuments")
+  requests      UserRequest[]
+  notifications Notification[]     @relation("AdminNotifications")
+}
+
+// ─── User / Tenant ───────────────────────────────────────────────────────────
+model User {
+  id                        String    @id @default(uuid())
+  email                     String    @unique
+  passwordHash              String
+  name                      String
+  phone                     String?
+  adminId                   String
+  admin                     Admin     @relation(fields: [adminId], references: [id])
+  status                    String    @default("active")
+  emailVerified             Boolean   @default(false)
+  emailVerificationToken    String?
+  emailVerificationExpiry   DateTime?
+  passwordResetToken        String?
+  passwordResetExpiry       DateTime?
+  loginAttempts             Int       @default(0)
+  lockedUntil               DateTime?
+  lastLogin                 DateTime?
+  profileDetails            Json?
+  createdAt                 DateTime  @default(now())
+  updatedAt                 DateTime  @updatedAt
+  deletedAt                 DateTime?
+
+  rentalRecords   RentalRecord[]
+  agreements      Agreement[]
+  documents       UploadedDocument[] @relation("UserDocuments")
+  requests        UserRequest[]
+  notifications   Notification[]     @relation("UserNotifications")
+  loginActivities LoginActivity[]
+}
+
+// ─── Property ─────────────────────────────────────────────────────────────────
+model Property {
+  id            String    @id @default(uuid())
+  adminId       String
+  admin         Admin     @relation(fields: [adminId], references: [id])
+  name          String
+  address       String
+  roomNumber    String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  deletedAt     DateTime?
+
+  rentalRecords RentalRecord[]
+  agreements    Agreement[]
+}
+
+// ─── Rental Record ────────────────────────────────────────────────────────────
+model RentalRecord {
+  id         String   @id @default(uuid())
+  adminId    String
+  admin      Admin    @relation(fields: [adminId], references: [id])
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
+  propertyId String
+  property   Property @relation(fields: [propertyId], references: [id])
+  startDate  DateTime
+  endDate    DateTime
+  status     String   @default("active")
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  deletedAt  DateTime?
+}
+
+// ─── Agreement ────────────────────────────────────────────────────────────────
+model Agreement {
+  id                      String    @id @default(uuid())
+  adminId                 String
+  admin                   Admin     @relation(fields: [adminId], references: [id])
+  userId                  String
+  user                    User      @relation(fields: [userId], references: [id])
+  propertyId              String
+  property                Property  @relation(fields: [propertyId], references: [id])
+  rentAmountInfo          Float
+  depositAmountInfo       Float
+  noticePeriod            String?
+  lockInPeriod            String?
+  maintenanceRules        String?
+  houseRules              String?
+  termsAndConditions      String?
+  agreementVersion        Int       @default(1)
+  status                  String    @default("Draft")
+  digitalAcceptanceStatus String    @default("Pending")
+  acceptedAt              DateTime?
+  acceptedIp              String?
+  acceptedDevice          String?
+  expiryDate              DateTime?
+  clauses                 Json?
+  createdAt               DateTime  @default(now())
+  updatedAt               DateTime  @updatedAt
+  deletedAt               DateTime?
+}
+
+// ─── Uploaded Document ────────────────────────────────────────────────────────
+model UploadedDocument {
+  id              String   @id @default(uuid())
+  uploaderId      String
+  uploaderType    String   // "admin" | "user"
+  adminUploader   Admin?   @relation("AdminDocuments", fields: [adminId], references: [id])
+  adminId         String?
+  userUploader    User?    @relation("UserDocuments", fields: [userId], references: [id])
+  userId          String?
+  documentType    String
+  originalName    String
+  secureFileName  String
+  fileUrl         String
+  mimeType        String?
+  fileSize        Int?
+  status          String   @default("Uploaded")
+  rejectionReason String?
+  aiSummary       String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  deletedAt       DateTime?
+}
+
+// ─── User Request ─────────────────────────────────────────────────────────────
+model UserRequest {
+  id          String   @id @default(uuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  adminId     String
+  admin       Admin    @relation(fields: [adminId], references: [id])
+  category    String?
+  priority    String?
+  description String
+  status      String   @default("Pending")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  deletedAt   DateTime?
+}
+
+// ─── Notification ─────────────────────────────────────────────────────────────
+model Notification {
+  id          String   @id @default(uuid())
+  recipientId String
+  recipientType String  // "master_admin" | "admin" | "user"
+  adminRecipient Admin? @relation("AdminNotifications", fields: [adminId], references: [id])
+  adminId     String?
+  userRecipient User?  @relation("UserNotifications", fields: [userId], references: [id])
+  userId      String?
+  title       String
+  message     String
+  type        String   @default("info")
+  readStatus  Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  deletedAt   DateTime?
+}
+
+// ─── Audit Log ────────────────────────────────────────────────────────────────
+model AuditLog {
+  id          String   @id @default(uuid())
+  actorId     String
+  actorType   String
+  actorEmail  String?
+  actorName   String?
+  action      String
+  targetId    String?
+  targetTable String?
+  oldValue    Json?
+  newValue    Json?
+  ipAddress   String?
+  deviceInfo  String?
+  status      String   @default("success")
+  timestamp   DateTime @default(now())
+}
+
+// ─── Login Activity ───────────────────────────────────────────────────────────
+model LoginActivity {
+  id           String   @id @default(uuid())
+  userId       String
+  user         User     @relation(fields: [userId], references: [id])
+  role         String
+  email        String
+  status       String   // "success" | "failed" | "locked"
+  ipAddress    String?
+  deviceInfo   String?
+  failedReason String?
+  timestamp    DateTime @default(now())
+}
+
+// ─── Enums ────────────────────────────────────────────────────────────────────
+enum AdminStatus {
+  PENDING
+  APPROVED
+  SUSPENDED
+}

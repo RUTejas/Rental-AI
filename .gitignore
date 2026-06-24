@@ -1,0 +1,27 @@
+# Secrets and local configuration
+.env
+.env.local
+.env.*.local
+backend/.env
+
+# Dependencies and build artifacts
+node_modules/
+frontend/node_modules/
+backend/node_modules/
+frontend/.next/
+backend/dist/
+*.tsbuildinfo
+
+# Runtime data and local tooling
+backend/uploads/
+backend/logs/
+.npm-cache/
+backend/.npm-cache/
+frontend/.npm-cache/
+backend/.tmp/
+
+# OS and editor files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
