@@ -6,14 +6,21 @@ RentWise AI is a role-scoped rental administration platform for one Master Admin
 
 1. Start PostgreSQL with `docker compose up -d db`.
 2. Copy `.env.example` to `backend/.env` and replace every secret.
-3. In `backend`, run `npx prisma db push`, then `npm run dev`.
-4. In `frontend`, set `NEXT_PUBLIC_API_URL=http://localhost:5000/api` in `.env.local`, then run `npm run dev`.
+3. Run `npm run install:all`, then `npm run setup:local`.
+4. Set `NEXT_PUBLIC_API_URL=http://localhost:5000/api` in `frontend/.env.local`.
+5. Run `npm run dev` from two terminals if your shell blocks background processes, or use `npm run dev:backend` and `npm run dev:frontend` separately.
+
+For a migration-managed fresh PostgreSQL database, run `npm --prefix backend run prisma:migrate`. For local reset/development use `npm --prefix backend exec prisma db push -- --force-reset`.
 
 The backend health endpoint is available at `http://localhost:5000/health`.
 
 ## Production containers
 
 Set the secret environment variables shown in `.env.example`, then run `docker compose up --build -d`. The frontend is exposed on port 3000 and the API on port 5000.
+
+## Render deployment
+
+Use the included `render.yaml` Blueprint to deploy the actual Next.js application, Express API, and managed PostgreSQL database on Render. Follow [RENDER_DEPLOYMENT.md](RENDER_DEPLOYMENT.md) after pushing the repository. Streamlit is an optional public companion only; it does not host the authenticated multi-user product.
 
 ## Streamlit Cloud companion
 
